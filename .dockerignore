@@ -1,0 +1,15 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+.venv
+venv
+.env
+.pytest_cache
+static/logos/*
+static/pdfs/*
+static/signatures/*
+!static/logos/.gitkeep
+!static/pdfs/.gitkeep
+!static/signatures/.gitkeep
+tests

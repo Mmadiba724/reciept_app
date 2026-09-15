@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Receipt {{ receipt.reference_number }}</title>
+<style>
+  @page { size: A4; margin: 2.5cm 2cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; color: #1a1a1a; }
+  .letterhead { display: flex; align-items: center; border-bottom: 2px solid #1a1a1a; padding-bottom: 12px; margin-bottom: 20px; }
+  .letterhead img { max-height: 70px; margin-right: 16px; }
+  .letterhead .business-name { font-size: 18pt; font-weight: bold; }
+  .letterhead .details { font-size: 9.5pt; color: #444; line-height: 1.4; }
+  .receipt-title { text-align: center; font-size: 16pt; font-weight: bold; letter-spacing: 2px; margin: 16px 0; text-transform: uppercase; }
+  .meta-row { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 11pt; }
+  table.fields { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  table.fields td { padding: 8px 4px; border-bottom: 1px solid #ddd; vertical-align: top; }
+  table.fields td.label { width: 32%; font-weight: bold; color: #333; }
+  .amount-words { font-style: italic; }
+  .signature-block { margin-top: 60px; display: flex; justify-content: flex-end; }
+  .signature-block .sig-inner { text-align: center; }
+  .signature-block img { max-height: 60px; display: block; margin: 0 auto 4px; }
+  .signature-line { border-top: 1px solid #1a1a1a; padding-top: 4px; min-width: 220px; }
+  .footer-note { margin-top: 40px; font-size: 9pt; color: #777; text-align: center; }
+</style>
+</head>
+<body>
+
+  <div class="letterhead">
+    {% if tenant.logo_url %}<img src="{{ tenant.logo_url }}" alt="logo">{% endif %}
+    <div>
+      <div class="business-name">{{ tenant.business_name }}</div>
+      <div class="details">
+        {% if tenant.po_box %}P.O. Box {{ tenant.po_box }}<br>{% endif %}
+        {% if tenant.physical_address %}{{ tenant.physical_address }}<br>{% endif %}
+        {% if tenant.contact_phone or tenant.contact_email %}
+          {{ tenant.contact_phone or "" }}{% if tenant.contact_phone and tenant.contact_email %} &middot; {% endif %}{{ tenant.contact_email or "" }}<br>
+        {% endif %}
+        {% if tenant.bank_name or tenant.bank_account_number %}
+          {{ tenant.bank_name or "" }} {{ tenant.bank_account_number or "" }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="receipt-title">Payment Receipt</div>
+
+  <div class="meta-row">
+    <div><strong>Receipt No:</strong> {{ receipt.reference_number }}</div>
+    <div><strong>Date Paid:</strong> {{ receipt.paid_at.strftime("%d %B %Y") }}</div>
+  </div>
+
+  <table class="fields">
+    <tr>
+      <td class="label">Received From</td>
+      <td>{{ customer.name }}</td>
+    </tr>
+    <tr>
+      <td class="label">Amount</td>
+      <td>
+        {{ amount_display }}<br>
+        <span class="amount-words">{{ receipt.amount_in_words }}</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Reason for Payment</td>
+      <td>{{ receipt.reason }}</td>
+    </tr>
+    <tr>
+      <td class="label">Payment Method</td>
+      <td>
+        {{ receipt.payment_method.value.replace("_", " ").title() }}
+        {% if receipt.payment_reference %}(Ref: {{ receipt.payment_reference }}){% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Balance</td>
+      <td>{{ balance_display }}</td>
+    </tr>
+  </table>
+
+  <div class="signature-block">
+    <div class="sig-inner">
+      {% if receipt.signature_image_url %}<img src="{{ receipt.signature_image_url }}" alt="signature">{% endif %}
+      <div class="signature-line">{{ receipt.issuer_printed_name }}</div>
+    </div>
+  </div>
+
+  <div class="footer-note">This receipt documents a payment received locally. It was not processed online by this platform.</div>
+
+</body>
+</html>

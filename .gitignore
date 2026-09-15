@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+static/logos/*
+static/signatures/*
+static/pdfs/*
+!static/logos/.gitkeep
+!static/signatures/.gitkeep
+!static/pdfs/.gitkeep
+.pytest_cache/
+*.egg-info/
