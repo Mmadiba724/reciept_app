@@ -34,6 +34,14 @@ class Settings(BaseSettings):
     app_base_url: str = "http://localhost:8000"
     storage_dir: str = "./static"
 
+    # Comma-separated list of allowed browser origins for the frontend portal,
+    # e.g. "http://localhost:5173,https://portal.example.com".
+    cors_allow_origins_raw: str = "http://localhost:5173"
+
+    @property
+    def cors_allow_origins(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_allow_origins_raw.split(",") if origin.strip()]
+
 
 @lru_cache
 def get_settings() -> Settings:
