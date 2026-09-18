@@ -38,6 +38,13 @@ class Settings(BaseSettings):
     # e.g. "http://localhost:5173,https://portal.example.com".
     cors_allow_origins_raw: str = "http://localhost:5173"
 
+    # Regex for browser origins to allow beyond the explicit list above, e.g. to
+    # cover Vercel's per-deploy preview URLs, which change on every deploy and
+    # can't be pinned to a single origin. Empty disables the regex match.
+    cors_allow_origin_regex: str = (
+        r"^https://recieptappportal(-[a-z0-9]+)?-mmadiba724s-projects\.vercel\.app$"
+    )
+
     @property
     def cors_allow_origins(self) -> list[str]:
         return [origin.strip() for origin in self.cors_allow_origins_raw.split(",") if origin.strip()]
